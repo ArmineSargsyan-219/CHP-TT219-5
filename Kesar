@@ -1,0 +1,42 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+string caesarCipher(string text, int shift) {
+    string result = "";
+
+    
+    for (int i = 0; i < text.length(); i++) {
+        char ch = text[i];
+
+        
+        if (isupper(ch)) {
+            result += char(int(ch + shift - 65) % 26 + 65);
+        }
+        
+        else if (islower(ch)) {
+            result += char(int(ch + shift - 97) % 26 + 97);
+        }
+ 
+        else {
+            result += ch;
+        }
+    }
+    return result;
+}
+
+int main() {
+    string text;
+    int shift;
+
+    cout << "Enter the text to encrypt: ";
+    getline(cin, text);
+
+    cout << "Enter the shift value: ";
+    cin >> shift;
+
+    string encryptedText = caesarCipher(text, shift);
+    cout << "Encrypted Text: " << encryptedText << endl;
+
+    return 0;
+}
