@@ -1,79 +1,66 @@
 #include <iostream>
-#include <string>
 #include <vector>
-#include <sstream>
+#include <string>
+#include <iomanip>  
+using namespace std;
 
-std::string runLengthEncode(const std::string& input) {
-    std::string encoded = "";
-    int n = input.length();
-
-    for (int i = 0; i < n; i++) {
-        int count = 1;
-        while (i + 1 < n && input[i] == input[i + 1]) {
-            count++;
-            i++;
-        }
-        encoded += input[i] + std::to_string(count);
+void printMatrix(const vector<vector<char>>& matrix) {
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix[i].size(); j++) {
+            cout << setw(2) << matrix[i][j];  }
+        cout << endl;
     }
-    return encoded;
 }
 
-std::string runLengthDecode(const std::string& encoded) {
-    std::string decoded = "";
-    int n = encoded.length();
+
+vector<vector<char>> rotateMatrix(const vector<vector<char>>& matrix) {
+    int n = matrix.size();    
+    int m = matrix[0].size();
+    
+    vector<vector<char>> rotated(m, vector<char>(n));
 
     for (int i = 0; i < n; i++) {
-        char currentChar = encoded[i];
-        i++;
-        std::string countStr = "";
-
-        while (i < n && isdigit(encoded[i])) {
-            countStr += encoded[i];
-            i++;
+        for (int j = 0; j < m; j++) {
+            rotated[j][n - 1 - i] = matrix[i][j]; 
         }
-        int count = std::stoi(countStr);
-        decoded.append(count, currentChar);
-        i--;
-    }
-    return decoded;
-}
-
-std::string rotateString(const std::string& encoded) {
-    std::vector<std::string> lines;
-    std::istringstream stream(encoded);
-    std::string word;
-
-    // Split the encoded string into "lines"
-    while (stream >> word) {
-        lines.push_back(word);
-    }
-
-    // Prepare for rotated string
-    std::string rotated;
-
-    // Create the rotated version
-    for (size_t i = 0; i < lines.size(); ++i) {
-        for (size_t j = lines.size(); j-- > 0; ) {
-            if (i < lines[j].length()) {
-                rotated += lines[j][i];
-            }
-        }
-        rotated += ' ';  // Add space between "rotated lines"
     }
 
     return rotated;
 }
 
 int main() {
-    std::string input = "A small cat";
-    std::string encoded = runLengthEncode(input);
-    std::string rotatedEncoded = rotateString(encoded);
-    std::string decoded = runLengthDecode(rotatedEncoded);
+    string text = "A small cat";
+    int rows = 3;
+    int cols = 4;
 
-    std::cout << "Input: " << input << std::endl;
-    std::cout << "Encoded: " << encoded << std::endl;
-    std::cout << "Rotated Encoded: " << rotatedEncoded << std::endl;
-    std::cout << "Decoded from Rotated: " << decoded << std::endl;
+    
+    vector<vector<char>> matrix(rows, vector<char>(cols, ' '));  
+    
+    int index = 0;
+    for (int i = 0; i < rows && index < text.length(); i++) {
+        for (int j = 0; j < cols && index < text.length(); j++) {
+            matrix[i][j] = text[index++];
+        }
+    }
+
+    cout << "Original Matrix:" << endl;
+    printMatrix(matrix);
+
+
+    vector<vector<char>> rotatedMatrix = rotateMatrix(matrix);
+
+    cout << "\nRotated Matrix (90 degrees clockwise):" << endl;
+    printMatrix(rotatedMatrix);
+
+   
+    string decryptedText = "";
+    for (int i = 0; i < rotatedMatrix.size(); i++) {
+        for (int j = 0; j < rotatedMatrix[i].size(); j++) {
+            decryptedText += rotatedMatrix[i][j];
+        }
+    }
+
+    cout << "\nDecrypted Text: " << decryptedText << endl;
 
     return 0;
 }
