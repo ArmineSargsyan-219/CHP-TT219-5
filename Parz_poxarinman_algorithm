@@ -1,0 +1,81 @@
+#include <iostream>
+#include <string>
+#include <algorithm>
+#include <cctype>
+#include <unordered_set>
+
+std::string createSubstitutionAlphabet(const std::string& keyword) {
+    std::string alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string substitutionAlphabet = keyword;
+
+    std::unordered_set<char> seen;
+    for (char ch : keyword) {
+        char upperCh = std::toupper(ch);
+        if (seen.find(upperCh) == seen.end()) {
+            seen.insert(upperCh);
+            substitutionAlphabet += upperCh;
+        }
+    }
+
+    for (char ch : alphabet) {
+        if (seen.find(ch) == seen.end()) {
+            substitutionAlphabet += ch;
+        }
+    }
+
+    return substitutionAlphabet;
+}
+
+std::string encrypt(const std::string& plaintext, const std::string& substitutionAlphabet) {
+    std::string ciphertext;
+    for (char ch : plaintext) {
+        if (std::isalpha(ch)) {
+            char upperCh = std::toupper(ch);
+            int index = upperCh - 'A';
+            ciphertext += substitutionAlphabet[index];
+        } else {
+            ciphertext += ch;
+        }
+    }
+    return ciphertext;
+}
+
+std::string decrypt(const std::string& ciphertext, const std::string& substitutionAlphabet) {
+    std::string plaintext;
+    for (char ch : ciphertext) {
+        if (std::isalpha(ch)) {
+            char upperCh = std::toupper(ch);
+            int index = substitutionAlphabet.find(upperCh);
+            plaintext += (index != std::string::npos) ? 'A' + index : ch;
+        } else {
+            plaintext += ch; 
+        }
+    }
+    return plaintext;
+}
+
+int main() {
+    std::string keyword;
+    std::cout << "Enter a keyword for the cipher: ";
+    std::getline(std::cin, keyword);
+
+    std::string substitutionAlphabet = createSubstitutionAlphabet(keyword);
+    
+    std::string plaintext;
+    std::cout << "Enter the text to encrypt: ";
+    std::getline(std::cin, plaintext);
+
+    std::string encryptedText = encrypt(plaintext, substitutionAlphabet);
+    std::cout << "Encrypted text: " << encryptedText << std::endl;
+
+    std::string decryptedText = decrypt(encryptedText, substitutionAlphabet);
+    std::cout << "Decrypted text: " << decryptedText << std::endl;
+
+    if (plaintext == decryptedText) {
+        std::cout << "Success: Decryption matches the original text." << std::endl;
+    } else {
+        std::cout << "Decryption failed." << std::endl;
+    }
+
+    return 0;
+}
