@@ -3,7 +3,7 @@
 using namespace std; 
 
 
-int amenamec(int a, int b) 
+int biggest(int a, int b) 
 { 
 
 	int result = min(a, b); 
@@ -21,8 +21,8 @@ int amenamec(int a, int b)
 
 int main() 
 { 
-	int a = 98, b = 56; 
-	cout << "amenamecbajanarary " << a << "  " << b << endl
-		<< amenamec(a, b); 
+	int a = 78, b = 32; 
+	cout << "Amenamec bajanarary " << a << "  " << b << endl
+		<< biggest(a, b); 
 	return 0; 
 }
