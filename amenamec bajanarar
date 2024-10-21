@@ -1,28 +1,24 @@
+#include <iostream>
+using namespace std;
 
-#include <bits/stdc++.h> 
-using namespace std; 
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
 
+int main() {
+    int a, b;
 
-int biggest(int a, int b) 
-{ 
+    cout << "Enter two numbers: ";
+    cin >> a >> b;
 
-	int result = min(a, b); 
-	while (result > 0) { 
-		if (a % result == 0 && b % result == 0) { 
-			break; 
-		} 
-		result--; 
-	} 
+ 
+    int result = gcd(a, b);
+    cout << "Greatest Common Divisor (GCD) of " << a << " and " << b << " is: " << result << endl;
 
-
-	return result; 
-} 
-
-
-int main() 
-{ 
-	int a = 78, b = 32; 
-	cout << "Amenamec bajanarary " << a << "  " << b << endl
-		<< biggest(a, b); 
-	return 0; 
+    return 0;
 }
