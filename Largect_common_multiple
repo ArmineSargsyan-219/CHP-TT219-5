@@ -1,0 +1,77 @@
+#include <iostream>
+#include <cmath>
+
+void primeFactorization(int n, int primePowers[]) {
+    while (n % 2 == 0) {
+        primePowers[2]++;
+        n /= 2;
+    }
+
+    for (int i = 3; i <= std::sqrt(n); i += 2) {
+        while (n % i == 0) {
+            primePowers[i]++;
+            n /= i;
+        }
+    }
+
+    if (n > 2) {
+        primePowers[n]++;
+    }
+}
+
+void displayPrimeFactors(int primePowers[]) {
+    for (int i = 2; i < 1000; ++i) {
+        if (primePowers[i] > 0) {
+            for (int j = 0; j < primePowers[i]; ++j) {
+                std::cout << i << " ";
+            }
+        }
+    }
+    std::cout << std::endl;
+}
+
+int computeLCM(int a, int b) {
+    int primePowersA[1000] = {0}; 
+    int primePowersB[1000] = {0};  
+
+    primeFactorization(a, primePowersA);
+    primeFactorization(b, primePowersB);
+
+    int lcm = 1;
+
+    for (int i = 2; i < 1000; i++) {
+        if (primePowersA[i] > 0 || primePowersB[i] > 0) {
+            int maxPower = std::max(primePowersA[i], primePowersB[i]);
+            lcm *= std::pow(i, maxPower); 
+        }
+    }
+
+    return lcm;
+}
+
+int main() {
+    int a = 0;
+    int b = 0;
+
+    std::cout << "Enter the first number: " << std::endl;
+    std::cin >> a;
+
+    std::cout << "Enter the second number: " << std::endl;
+    std::cin >> b;
+
+    int primePowersA[1000] = {0};
+    int primePowersB[1000] = {0};
+
+    std::cout << "Prime factors of " << a << " are: ";
+    primeFactorization(a, primePowersA);
+    displayPrimeFactors(primePowersA);
+
+    std::cout << "Prime factors of " << b << " are: ";
+    primeFactorization(b, primePowersB);
+    displayPrimeFactors(primePowersB);
+
+    int lcm = computeLCM(a, b);
+    std::cout << "LCM of " << a << " and " << b << " is: " << lcm << std::endl;
+
+    return 0;
+}
