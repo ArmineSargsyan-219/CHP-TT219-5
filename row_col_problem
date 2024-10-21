@@ -1,0 +1,60 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+
+void printMatrix(const std::vector<std::vector<char>>& matrix) {
+    for (const auto& row : matrix) {
+        for (char c : row) {
+            std::cout << std::setw(2) << c;
+        }
+        std::cout << std::endl;
+    }
+}
+
+void rotateMatrix90DegreesClockwise(std::vector<std::vector<char>>& matrix, int rows, int cols) {
+
+    std::vector<std::vector<char>> rotated(cols, std::vector<char>(rows, ' '));
+
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            rotated[j][rows - 1 - i] = matrix[i][j]; 
+        }
+    }
+
+    matrix = rotated; 
+}
+
+int main() {
+    std::string text = "A small cat";
+    int rows = 3; 
+    int cols = 4; 
+
+    std::vector<std::vector<char>> matrix(rows, std::vector<char>(cols, ' '));
+
+    int index = 0;
+    for (int i = 0; i < rows && index < text.length(); i++) {
+        for (int j = 0; j < cols && index < text.length(); j++) {
+            matrix[i][j] = text[index++];
+        }
+    }
+
+    std::cout << "Original Matrix:" << std::endl;
+    printMatrix(matrix);
+
+    rotateMatrix90DegreesClockwise(matrix, rows, cols);
+
+    std::cout << "\nRotated Matrix (90 degrees clockwise):" <<std:: endl;
+    printMatrix(matrix);
+
+    std::string decryptedText = "";
+    for (const auto& row : matrix) {
+        for (char c : row) {
+            decryptedText += c; 
+        }
+    }
+
+    std::cout << "\nDecrypted Text: " << decryptedText <<std:: endl;
+
+    return 0;
+}
