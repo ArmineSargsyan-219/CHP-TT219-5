@@ -56,3 +56,58 @@ int main() {
 
     return 0;
 }
+
+
+////////////////////////////////////////////////////////
+
+#include <iostream>
+#include <vector>
+#include <string>
+
+std::vector<std::pair<char, int>> runLengthEncode(const std::string& input) {
+    std::vector<std::pair<char, int>> encoded;
+    int n = input.length();
+
+    for (int i = 0; i < n; i++) {
+        char currentChar = input[i];
+        int count = 1;
+
+        while (i + 1 < n && input[i] == input[i + 1]) {
+            count++;
+            i++;
+        }
+
+        encoded.push_back({currentChar, count});
+    }
+    
+    return encoded;
+}
+
+std::string runLengthDecode(const std::vector<std::pair<char, int>>& encoded) {
+    std::string decoded;
+
+    for (const auto& pair : encoded) {
+        decoded += std::string(pair.second, pair.first);
+    }
+
+    return decoded;
+}
+
+int main() {
+    std::string input = "aaaabbbbbcdd";
+
+    std::vector<std::pair<char, int>> encoded = runLengthEncode(input);
+
+    std::cout << "Encoded: ";
+    for (const auto& pair : encoded) {
+        std::cout << "(" << pair.first << ", " << pair.second << ") ";
+    }
+    std::cout << std::endl;
+
+    std::string decoded = runLengthDecode(encoded);
+
+    std::cout << "Decoded: " << decoded << std::endl;
+
+    return 0;
+}
+
