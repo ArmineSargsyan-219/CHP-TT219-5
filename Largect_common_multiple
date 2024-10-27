@@ -2,6 +2,8 @@
 #include <cmath>
 
 void primeFactorization(int n, int primePowers[]) {
+    n = std::abs(n); 
+    
     while (n % 2 == 0) {
         primePowers[2]++;
         n /= 2;
@@ -53,20 +55,24 @@ int main() {
     int a = 0;
     int b = 0;
 
-    std::cout << "Enter the first number: " << std::endl;
+    std::cout << "Enter the first number: ";
     std::cin >> a;
 
-    std::cout << "Enter the second number: " << std::endl;
+    std::cout << "Enter the second number: ";
     std::cin >> b;
+
+    if (a < 0 || b < 0) {
+        std::cout << "Negative inputs detected. Calculating with absolute values." << std::endl;
+    }
 
     int primePowersA[1000] = {0};
     int primePowersB[1000] = {0};
 
-    std::cout << "Prime factors of " << a << " are: ";
+    std::cout << "Prime factors of " << std::abs(a) << " are: ";
     primeFactorization(a, primePowersA);
     displayPrimeFactors(primePowersA);
 
-    std::cout << "Prime factors of " << b << " are: ";
+    std::cout << "Prime factors of " << std::abs(b) << " are: ";
     primeFactorization(b, primePowersB);
     displayPrimeFactors(primePowersB);
 
