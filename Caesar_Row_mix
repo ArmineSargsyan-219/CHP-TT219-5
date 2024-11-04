@@ -1,0 +1,104 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+
+std::string caesarEncrypt(const std::string& text, int shift) {
+    std::string result;
+    for (char c : text) {
+        if (std::isalpha(c)) {
+            char base = std::islower(c) ? 'a' : 'A';
+            result += (c - base + shift) % 26 + base;
+        } else {
+            result += c;
+        }
+    }
+    return result;
+}
+
+std::string caesarDecrypt(const std::string& text, int shift) {
+    return caesarEncrypt(text, 26 - shift); 
+}
+
+void printMatrix(const std::vector<std::vector<char>>& matrix) {
+    for (const auto& row : matrix) {
+        for (char c : row) {
+            std::cout << std::setw(2) << c;
+        }
+        std::cout << std::endl;
+    }
+}
+
+std::vector<std::vector<char>> createMatrix(const std::string& text, int rows, int cols) {
+    std::vector<std::vector<char>> matrix(rows, std::vector<char>(cols, ' '));
+    int index = 0;
+    for (int i = 0; i < rows && index < text.length(); i++) {
+        for (int j = 0; j < cols && index < text.length(); j++) {
+            matrix[i][j] = text[index++];
+        }
+    }
+    return matrix;
+}
+
+std::vector<std::vector<char>> rotateMatrix90DegreesClockwise(const std::vector<std::vector<char>>& matrix, int rows, int cols) {
+    std::vector<std::vector<char>> rotated(cols, std::vector<char>(rows, ' '));
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            rotated[j][rows - 1 - i] = matrix[i][j];
+        }
+    }
+    return rotated;
+}
+
+std::string matrixToString(const std::vector<std::vector<char>>& matrix) {
+    std::string text;
+    for (const auto& row : matrix) {
+        for (char c : row) {
+            if (c != ' ') text += c;
+        }
+    }
+    return text;
+}
+
+std::string encrypt(const std::string& input, int shift, int rows, int cols) {
+   
+    std::string encryptedText = caesarEncrypt(input, shift);
+    std::cout << "Encrypted with Caesar Cipher: " << encryptedText << std::endl;
+
+    auto matrix = createMatrix(encryptedText, rows, cols);
+    std::cout << "Matrix before rotation:" << std::endl;
+    printMatrix(matrix);
+
+    auto rotatedMatrix = rotateMatrix90DegreesClockwise(matrix, rows, cols);
+
+    std::cout << "Matrix after rotation (encrypted):" << std::endl;
+    printMatrix(rotatedMatrix);
+
+    return matrixToString(rotatedMatrix);
+}
+
+std::string decrypt(const std::string& encrypted, int shift, int rows, int cols) {
+    auto matrix = createMatrix(encrypted, cols, rows); 
+    auto rotatedBackMatrix = rotateMatrix90DegreesClockwise(matrix, cols, rows); 
+
+    std::cout << "Matrix after reversing rotation:" << std::endl;
+    printMatrix(rotatedBackMatrix);
+
+    std::string decryptedText = matrixToString(rotatedBackMatrix);
+
+    return caesarDecrypt(decryptedText, shift);
+}
+
+int main() {
+    std::string input = "A small cat";
+    int shift = 3; 
+    int rows = 3, cols = 4;
+
+    std::string encrypted = encrypt(input, shift, rows, cols);
+    std::cout << "\nEncrypted Text: " << encrypted << std::endl;
+
+    std::string decrypted = decrypt(encrypted, shift, rows, cols);
+    std::cout << "\nDecrypted Text: " << decrypted << std::endl;
+
+    return 0;
+}
