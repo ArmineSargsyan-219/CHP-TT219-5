@@ -1,0 +1,79 @@
+#!/bin/bash
+
+while true; do
+    clear
+    echo "=========================="
+    echo "Network and File Operations"
+    echo "=========================="
+    echo "1. Print the IPv4 and IPv6 addresses of the given device."
+    echo "2. Network path (traceroute) of the outgoing IP packet to a host."
+    echo "3. Get IP address of a given Internet node (hostname/URL)."
+    echo "4. Encrypt a file or input text."
+    echo "5. Decrypt a file or input text."
+    echo "6. Click the file/typed text (Dummy placeholder)."
+    echo "7. Restore file/typed text (Dummy placeholder)."
+    echo "8. Calculate the checksum of a file."
+    echo "9. Exit"
+    echo "=========================="
+    read -p "Enter your choice: " choice
+
+    case $choice in
+        1)
+            read -p "Enter device hostname or IP address: " device
+            echo "IPv4/IPv6 addresses for $device:"
+            nslookup $device
+            read -p "Press Enter to continue..."
+            ;;
+        2)
+            read -p "Enter hostname or URL for traceroute: " host
+            traceroute $host
+            read -p "Press Enter to continue..."
+            ;;
+        3)
+        read -p "Enter hostname or URL: " host
+        resolved_ip=$(ping -c 1 $host | sed -n 's/.*(\(.*\)).*/\1/p')
+        if [ -z "$resolved_ip" ]; then
+         echo "Failed to resolve IP address for $host."
+        else
+          echo "IP address for $host is: $resolved_ip"
+        fi
+         read -p "Press Enter to continue..."
+        ;;
+
+        4)
+            read -p "Enter file path to encrypt: " filepath
+            read -p "Enter encryption key: " key
+            openssl enc -aes-256-cbc -salt -in "$filepath" -out "${filepath}.enc" -k "$key"
+            echo "Encrypted content saved to ${filepath}.enc"
+            read -p "Press Enter to continue..."
+            ;;
+        5)
+            read -p "Enter file path to decrypt: " filepath
+            read -p "Enter decryption key: " key
+            openssl enc -aes-256-cbc -d -in "$filepath" -out "${filepath%.enc}" -k "$key"
+            echo "Decrypted content saved to ${filepath%.enc}"
+            read -p "Press Enter to continue..."
+            ;;
+        6)
+            echo "Placeholder: Clicking is not supported in this script."
+            read -p "Press Enter to continue..."
+            ;;
+        7)
+            echo "Placeholder: Restoration process not defined."
+            read -p "Press Enter to continue..."
+            ;;
+        8)
+            read -p "Enter file path to calculate checksum: " filepath
+            sha256sum "$filepath"
+            read -p "Press Enter to continue..."
+            ;;
+        9)
+            echo "Exiting..."
+            break
+            ;;
+        *)
+            echo "Invalid choice. Please try again."
+            read -p "Press Enter to continue..."
+            ;;
+    esac
+done
