@@ -1,0 +1,46 @@
+#include <iostream>
+#include <mutex>
+
+class Singleton {
+private:
+    static Singleton* instance;  
+    static std::mutex mtx;       
+
+    
+    Singleton() {
+        std::cout << "Singleton instance created.\n";
+    }
+
+
+    Singleton(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+
+public:
+    static Singleton* getInstance() {
+        if (instance == nullptr) { 
+            std::lock_guard<std::mutex> lock(mtx); 
+            if (instance == nullptr) {  
+                instance = new Singleton();
+            }
+        }
+        return instance;
+    }
+
+    void display() {
+        std::cout << "Hello from Singleton instance!\n";
+    }
+};
+
+Singleton* Singleton::instance = nullptr;
+std::mutex Singleton::mtx;
+
+int main() {
+
+    std::thread t1([]() { Singleton::getInstance()->display(); });
+    std::thread t2([]() { Singleton::getInstance()->display(); });
+
+    t1.join();
+    t2.join();
+
+    return 0;
+}
