@@ -20,38 +20,52 @@ while true; do
     case $choice in
         1)
             read -p "Enter device hostname or IP address: " device
-            echo "IPv4/IPv6 addresses for $device:"
-            nslookup $device
+            echo "IPv4 addresses:"
+            dig +short A $device 2>/dev/null || echo "dig not available, skipping IPv4."
+            echo "IPv6 addresses:"
+            dig +short AAAA $device 2>/dev/null || echo "dig not available, skipping IPv6."
             read -p "Press Enter to continue..."
             ;;
         2)
             read -p "Enter hostname or URL for traceroute: " host
-            traceroute $host
+            if command -v traceroute >/dev/null 2>&1; then
+                traceroute $host
+            else
+                echo "traceroute not available. Trying Windows tracert..."
+                tracert $host
+            fi
             read -p "Press Enter to continue..."
             ;;
         3)
-        read -p "Enter hostname or URL: " host
-        resolved_ip=$(ping -c 1 $host | sed -n 's/.*(\(.*\)).*/\1/p')
-        if [ -z "$resolved_ip" ]; then
-         echo "Failed to resolve IP address for $host."
-        else
-          echo "IP address for $host is: $resolved_ip"
-        fi
-         read -p "Press Enter to continue..."
-        ;;
-
+            read -p "Enter hostname or URL: " host
+            resolved_ip=$(nslookup $host | grep "Address:" | tail -n 1 | awk '{print $2}')
+            if [ -z "$resolved_ip" ]; then
+                echo "Failed to resolve IP address for $host."
+            else
+                echo "IP address for $host is: $resolved_ip"
+            fi
+            read -p "Press Enter to continue..."
+            ;;
         4)
             read -p "Enter file path to encrypt: " filepath
             read -p "Enter encryption key: " key
-            openssl enc -aes-256-cbc -salt -in "$filepath" -out "${filepath}.enc" -k "$key"
-            echo "Encrypted content saved to ${filepath}.enc"
+            if [ -f "$filepath" ]; then
+                openssl enc -aes-256-cbc -salt -in "$filepath" -out "${filepath}.enc" -k "$key"
+                echo "Encrypted content saved to ${filepath}.enc"
+            else
+                echo "File not found: $filepath"
+            fi
             read -p "Press Enter to continue..."
             ;;
         5)
             read -p "Enter file path to decrypt: " filepath
             read -p "Enter decryption key: " key
-            openssl enc -aes-256-cbc -d -in "$filepath" -out "${filepath%.enc}" -k "$key"
-            echo "Decrypted content saved to ${filepath%.enc}"
+            if [ -f "$filepath" ]; then
+                openssl enc -aes-256-cbc -d -in "$filepath" -out "${filepath%.enc}" -k "$key"
+                echo "Decrypted content saved to ${filepath%.enc}"
+            else
+                echo "File not found: $filepath"
+            fi
             read -p "Press Enter to continue..."
             ;;
         6)
@@ -64,7 +78,11 @@ while true; do
             ;;
         8)
             read -p "Enter file path to calculate checksum: " filepath
-            sha256sum "$filepath"
+            if [ -f "$filepath" ]; then
+                sha256sum "$filepath"
+            else
+                echo "File not found: $filepath"
+            fi
             read -p "Press Enter to continue..."
             ;;
         9)
@@ -77,3 +95,4 @@ while true; do
             ;;
     esac
 done
+
